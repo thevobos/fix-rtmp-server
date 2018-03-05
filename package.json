@@ -1,0 +1,33 @@
+{
+  "name": "fix-rtmp-server",
+  "version": "1.1.10",
+  "description": "Fix Rtmp Server",
+  "main": "node_media_server.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "rtmp",
+    "flv",
+    "server"
+  ],
+  "author": "Cengiz AKCAN",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "dependencies": {
+    "express": "^4.15.4",
+    "lodash": "^4.17.4",
+    "ws": "^3.1.0",
+    "node-fetch": "^2.1.1"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}
