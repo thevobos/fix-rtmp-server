@@ -9,8 +9,6 @@ const Crypto 		= require('crypto');
 const EventEmitter 	= require('events');
 const fetch         = require('node-fetch');
 
-
-
 function generateNewSessionID(sessions) {
     let SessionID = '';
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWKYZ0123456789';
@@ -24,10 +22,9 @@ function generateNewSessionID(sessions) {
 }
 
 async function apiConnect(signStr, streamId, secretKey) {
-
-console.log(streamId);
-
-    let apiServer 	= await fetch(`https://api.github.com/users/`+signStr);
+	
+	let streamName 		= streamId.split("/");
+    let apiServer 		= await fetch("https://api.github.com/"+streamName[2]+"/"+signStr);
     let apiResult 		= await apiServer.json();
 
     if(apiResult.login){
@@ -36,9 +33,7 @@ console.log(streamId);
         return "error";
     }
 
-
 }
-
 
 function verifyAuth(signStr, streamId, secretKey) {
 
