@@ -839,34 +839,37 @@ class NodeRtmpSession extends EventEmitter {
       return;
     }
     if (this.config.auth !== undefined && this.config.auth.publish) {
-    let ts = this;
-      NodeCoreUtils.verifyAuth(ts.publishArgs.sign, ts.publishStreamPath, ts.config.auth.secret).then(function(result){
-          if (result === "error") {
-              console.log(`[rtmp publish] Unauthorized. ID=${ts.id} streamPath=${ts.publishStreamPath} sign=${ts.publishArgs.sign}`);
-              ts.sendStatusMessage(ts.publishStreamId, 'error', 'NetStream.publish.Unauthorized', 'Authorization required.');
+   
+   let thisIs = this;
+	
+      NodeCoreUtils.verifyAuth(thisIs.publishArgs.sign, thisIs.publishStreamPath, thisIs.config.auth.secret).then(function(result){
+          
+		  if (result === "passive") {
+              console.log(`[rtmp publish] Unauthorized. ID=${thisIs.id} streamPath=${thisIs.publishStreamPath} sign=${thisIs.publishArgs.sign}`);
+              thisIs.sendStatusMessage(thisIs.publishStreamId, 'error', 'NetStream.publish.Unauthorized', 'Authorization required.');
               return;
           }
 
-          if (ts.publishers.has(ts.publishStreamPath)) {
-              console.warn("[rtmp publish] Already has a stream path " + ts.publishStreamPath);
-              ts.sendStatusMessage(ts.publishStreamId, 'error', 'NetStream.Publish.BadName', 'Stream already publishing');
-          } else if (ts.isPublishing) {
+          if (thisIs.publishers.has(thisIs.publishStreamPath)) {
+              console.warn("[rtmp publish] Already has a stream path " + thisIs.publishStreamPath);
+              thisIs.sendStatusMessage(thisIs.publishStreamId, 'error', 'NetStream.Publish.BadName', 'Stream already publishing');
+          } else if (thisIs.isPublishing) {
               console.warn("[rtmp publish] NetConnection is publishing ");
-              ts.sendStatusMessage(ts.publishStreamId, 'error', 'NetStream.Publish.BadConnection', 'Connection already publishing');
+              thisIs.sendStatusMessage(thisIs.publishStreamId, 'error', 'NetStream.Publish.BadConnection', 'Connection already publishing');
           } else {
-              console.log("[rtmp publish] new stream path " + ts.publishStreamPath + ' streamId:' + ts.publishStreamId);
-              ts.publishers.set(ts.publishStreamPath, ts.id);
-              ts.isPublishing = true;
-              ts.players = new Set();
-              ts.sendStatusMessage(ts.publishStreamId, 'status', 'NetStream.Publish.Start', `${ts.publishStreamPath} is now published.`);
-              for (let idlePlayerId of ts.idlePlayers) {
-                  let idlePlayer = ts.sessions.get(idlePlayerId);
-                  if (idlePlayer.playStreamPath === ts.publishStreamPath) {
+              console.log("[rtmp publish] new stream path " + thisIs.publishStreamPath + ' streamId:' + thisIs.publishStreamId);
+              thisIs.publishers.set(thisIs.publishStreamPath, thisIs.id);
+              thisIs.isPublishing = true;
+              thisIs.players = new Set();
+              thisIs.sendStatusMessage(thisIs.publishStreamId, 'status', 'NetStream.Publish.Start', `${thisIs.publishStreamPath} is now published.`);
+              for (let idlePlayerId of thisIs.idlePlayers) {
+                  let idlePlayer = thisIs.sessions.get(idlePlayerId);
+                  if (idlePlayer.playStreamPath === thisIs.publishStreamPath) {
                       idlePlayer.emit('play');
-                      ts.idlePlayers.delete(idlePlayerId);
+                      thisIs.idlePlayers.delete(idlePlayerId);
                   }
               }
-              ts.nodeEvent.emit('postPublish', ts.id, ts.publishStreamPath, ts.publishArgs);
+              thisIs.nodeEvent.emit('postPublish', thisIs.id, thisIs.publishStreamPath, thisIs.publishArgs);
           }
 
         });
@@ -882,20 +885,20 @@ class NodeRtmpSession extends EventEmitter {
     }
     if (this.config.auth !== undefined && this.config.auth.play) {
 
-      let tss = this;
+      let thisIs = this;
 
-        NodeCoreUtils.verifyAuth(tss.playArgs.sign, tss.playStreamPath, tss.config.auth.secret).then(function(result) {
+        NodeCoreUtils.verifyAuth(thisIs.playArgs.sign, thisIs.playStreamPath, thisIs.config.auth.secret).then(function(result) {
 
-            if (result === "error") {
-                console.log(`[rtmp play] Unauthorized. ID=${tss.id} streamPath=${tss.playStreamPath} sign=${tss.playArgs.sign}`);
-                tss.sendStatusMessage(tss.playStreamId, 'error', 'NetStream.play.Unauthorized', 'Authorization required.');
+            if (result === "passive") {
+                console.log(`[rtmp play] Unauthorized. ID=${thisIs.id} streamPath=${thisIs.playStreamPath} sign=${thisIs.playArgs.sign}`);
+                thisIs.sendStatusMessage(thisIs.playStreamId, 'error', 'NetStream.play.Unauthorized', 'Authorization required.');
                 return;
             }
-            // Buraya
+            
         });
 
     }
-   // bu
+   /
     if (this.isPlaying) {
       console.warn("[rtmp play] NetConnection is playing");
       this.sendStatusMessage(this.playStreamId, 'error', 'NetStream.Play.BadConnection', 'Connection already playing');

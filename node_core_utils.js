@@ -24,14 +24,10 @@ function generateNewSessionID(sessions) {
 async function apiConnect(signStr, streamId, secretKey) {
 	
 	let streamName 		= streamId.split("/");
-    let apiServer 		= await fetch("https://api.github.com/"+streamName[2]+"/"+signStr);
+    let apiServer 		= await fetch("http://127.0.0.1/api/control/"+streamName[2]+"/"+signStr);
     let apiResult 		= await apiServer.json();
 
-    if(apiResult.login){
-        return "success";
-    }else{
-        return "error";
-    }
+    return apiResult.status
 
 }
 
